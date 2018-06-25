@@ -1,8 +1,7 @@
-package main
+package AmIMullvad
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 )
@@ -10,43 +9,44 @@ import (
 // BlacklistedResult is the actual data from various sources that tell whether
 // this IP is blacklisted. Contains info from an individual source.
 type BlacklistedResult struct {
-	name        string
-	link        string
-	blacklisted bool
+	Name        string
+	Link        string
+	Blacklisted bool
 }
 
 // Blacklisted is the subsection of the MullvadResult that shows whether you're
 // blacklisted.
 type Blacklisted struct {
-	blacklisted bool
-	results     [2]BlacklistedResult
+	Blacklisted bool
+	Results     map[string][2]BlacklistedResult
 }
 
 // MullvadResult is the parent result of a query
 type MullvadResult struct {
-	ip                    string
-	country               string
-	city                  string
-	longitude             float32
-	latitude              float32
-	mullvadExitIP         bool
-	mullvadExitIPHostname string
-	organization          string
-	mullvadServerType     string
-	blacklisted           Blacklisted
+	IP                    string
+	Country               string
+	City                  string
+	Longitude             float32
+	Latitude              float32
+	MullvadExitIP         bool
+	MullvadExitIPHostname string
+	Organization          string
+	MullvadServerType     string
+	Blacklisted           map[string]Blacklisted
 }
 
-func main() {
+// ParseSample --
+// Parses the sample JSON file.
+func ParseSample() MullvadResult {
+	var data MullvadResult
 	f, err := os.Open("sample.json")
 	if err != nil {
 		log.Panic(err)
 	}
 	defer f.Close()
-	var data MullvadResult
 	err = json.NewDecoder(f).Decode(&data)
 	if err != nil {
 		log.Panic(err)
 	}
-	fmt.Println(data.blacklisted.results)
-	fmt.Printf("%+v", data)
+	return data
 }
